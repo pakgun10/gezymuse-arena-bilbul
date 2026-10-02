@@ -251,6 +251,11 @@
       if (ex.placed[i]) { ex.hand.push(ex.placed[i]); ex.placed[i] = null; }
     }
     ex.selected = null;
+    var fb = $('ex-feedback');
+    fb.textContent = '';
+    fb.className = 'ex-feedback';
+    var slots = $('ex-slots').children;
+    for (var s = 0; s < slots.length; s++) slots[s].classList.remove('wrongmark');
     renderEx();
   });
 

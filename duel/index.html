@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1b3a">
+<title>Duel Operasi — Arena Bilangan Bulat</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <section id="screen-start" class="screen active">
+    <div class="hero">
+      <div class="logo">⚔️</div>
+      <h1>Duel Operasi</h1>
+      <p class="subtitle">Tantang <b>Bot Hitung</b> dalam duel operasi bilangan bulat!</p>
+    </div>
+    <div class="card howto">
+      <h3>🎮 Cara Bermain</h3>
+      <ul>
+        <li>Duel <b>best-of-3 ronde</b>: tiap ronde 8 soal.</li>
+        <li>Jawaban <b>benar</b> → seranganmu mengenai Bot (−15 HP). <b>Salah</b>/waktu habis → kamu yang kena!</li>
+        <li>Ronde 1: penjumlahan & pengurangan. Ronde 2: perkalian & pembagian. Ronde 3: <b>campuran sulit</b>!</li>
+        <li>Menangkan duel untuk menambah bintang ⭐ di Arena.</li>
+      </ul>
+    </div>
+    <button id="btn-start" class="btn btn-primary btn-big">⚔️ Mulai Duel!</button>
+    <button id="btn-mute" class="btn btn-ghost btn-small">🔊 Suara: Nyala</button>
+    <p class="back-link"><a href="../">← Kembali ke Arena</a></p>
+  </section>
+
+  <section id="screen-duel" class="screen">
+    <div class="fighters">
+      <div class="fighter" id="fighter-player">
+        <div class="f-top"><span class="f-avatar">🧑‍🎓</span><span class="f-name">Kamu</span></div>
+        <div class="hpbar"><div id="hp-player" class="hpfill"></div><span class="hptext" id="hptext-player">100</span></div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="fighter" id="fighter-bot">
+        <div class="f-top"><span class="f-avatar">🤖</span><span class="f-name">Bot Hitung</span></div>
+        <div class="hpbar"><div id="hp-bot" class="hpfill bot"></div><span class="hptext" id="hptext-bot">100</span></div>
+      </div>
+    </div>
+    <div class="round-info" id="round-info">Ronde 1 • Soal 1/8</div>
+    <div class="timer"><div id="timer-fill"></div></div>
+    <div class="card q-card">
+      <p id="q-prompt" class="q-prompt"></p>
+      <div id="q-choices" class="choices"></div>
+    </div>
+    <p id="duel-msg" class="duel-msg"></p>
+  </section>
+
+  <section id="screen-round" class="screen">
+    <div class="hero">
+      <div class="logo" id="round-emoji">🏁</div>
+      <h1 id="round-title">Ronde 1 Selesai!</h1>
+      <p class="subtitle" id="round-sub"></p>
+    </div>
+    <div class="card stats" id="round-stats"></div>
+    <button id="btn-next-round" class="btn btn-primary btn-big">Lanjut →</button>
+  </section>
+
+  <section id="screen-end" class="screen">
+    <div class="hero">
+      <div class="logo" id="end-emoji">🏆</div>
+      <h1 id="end-title">Kemenangan!</h1>
+      <p class="subtitle" id="end-sub"></p>
+    </div>
+    <div class="card stats" id="end-stats"></div>
+    <div class="btn-row">
+      <button id="btn-rematch" class="btn btn-primary">⚔️ Duel Lagi</button>
+      <button id="btn-end-arena" class="btn btn-ghost">🏟️ Kembali ke Arena</button>
+    </div>
+  </section>
+</div>
+<footer class="foot">Duel Operasi &bull; Arena Bilangan Bulat</footer>
+<script src="js/questions.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

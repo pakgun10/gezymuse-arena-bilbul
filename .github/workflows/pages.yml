@@ -1,0 +1,40 @@
+# Deploy otomatis ke GitHub Pages setiap push ke branch main.
+# Cara pakai:
+#   1. Buat repo baru di GitHub (mis. pakgun10/rasio-rush), JANGAN centang "Add a README".
+#   2. Push folder ini ke branch main repo tersebut.
+#   3. Di repo GitHub: Settings > Pages > Source > pilih "GitHub Actions".
+#   4. Selesai — game online di https://pakgun10.github.io/rasio-rush/
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

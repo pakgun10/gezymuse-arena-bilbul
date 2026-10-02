@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1b3a">
+<title>Arena Bilangan Bulat — Koleksi Game Matematika</title>
+<meta name="description" content="Koleksi media interaktif matematika: bilangan bulat & literasi finansial untuk SD-SMP.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header class="hero">
+    <div class="logo">🔢</div>
+    <h1>Arena Bilangan Bulat</h1>
+    <p class="subtitle">Koleksi media interaktif &bull; Matematika SD&ndash;SMP</p>
+    <p class="tp">TP: operasi hitung bilangan bulat &bull; pemecahan masalah sehari-hari &bull; literasi finansial</p>
+  </header>
+
+  <main id="game-grid" class="grid">
+    <a class="game-card" href="jelajah/">
+      <div class="gc-icon">🔍</div>
+      <div class="gc-body">
+        <h2>Jelajah Garis Bilangan</h2>
+        <p>Eksplorasi interaktif: lawan bilangan, nilai mutlak, membandingkan & mengurutkan.</p>
+        <div class="gc-meta"><span class="tp-tag">TP 1</span><span class="stars" id="stars-jelajah">☆☆☆</span></div>
+      </div>
+      <div class="gc-go">Mainkan →</div>
+    </a>
+
+    <a class="game-card" href="urutkan/">
+      <div class="gc-icon">🔢</div>
+      <div class="gc-body">
+        <h2>Urutkan Kilat</h2>
+        <p>Susun kartu bilangan dari terkecil ke terbesar — berpacu dengan waktu!</p>
+        <div class="gc-meta"><span class="tp-tag">TP 1</span><span class="stars" id="stars-urutkan">☆☆☆</span></div>
+      </div>
+      <div class="gc-go">Mainkan →</div>
+    </a>
+
+    <a class="game-card" href="duel/">
+      <div class="gc-icon">⚔️</div>
+      <div class="gc-body">
+        <h2>Duel Operasi</h2>
+        <p>Duel melawan Bot Hitung! Taklukkan penjumlahan, pengurangan, perkalian & pembagian.</p>
+        <div class="gc-meta"><span class="tp-tag">TP 1</span><span class="stars" id="stars-duel">☆☆☆</span></div>
+      </div>
+      <div class="gc-go">Mainkan →</div>
+    </a>
+
+    <a class="game-card" href="warung/">
+      <div class="gc-icon">🏪</div>
+      <div class="gc-body">
+        <h2>Warung Pintar</h2>
+        <p>Kelola kantin 5 hari: untung, rugi, utang, tabungan & bunga bank!</p>
+        <div class="gc-meta"><span class="tp-tag">TP 2</span><span class="stars" id="stars-warung">☆☆☆</span></div>
+      </div>
+      <div class="gc-go">Mainkan →</div>
+    </a>
+  </main>
+
+  <footer class="foot">Arena Bilangan Bulat &bull; Matematika SD&ndash;SMP &bull; Bilangan Bulat & Literasi Finansial</footer>
+</div>
+
+<script>
+(function () {
+  ['jelajah', 'urutkan', 'duel', 'warung'].forEach(function (id) {
+    var n = 0;
+    try { n = parseInt(localStorage.getItem('arena-bilangan:' + id), 10) || 0; } catch (e) {}
+    n = Math.max(0, Math.min(3, n));
+    var el = document.getElementById('stars-' + id);
+    if (el) el.textContent = '★'.repeat(n) + '☆'.repeat(3 - n);
+  });
+})();
+</script>
+</body>
+</html>

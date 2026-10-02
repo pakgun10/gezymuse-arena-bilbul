@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1b3a">
+<title>Urutkan Kilat — Arena Bilangan Bulat</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <section id="screen-start" class="screen active">
+    <div class="hero">
+      <div class="logo">🔢</div>
+      <h1>Urutkan Kilat</h1>
+      <p class="subtitle">Susun bilangan dari <b>terkecil ke terbesar</b> — secepat kilat!</p>
+    </div>
+    <div class="card howto">
+      <h3>🎮 Cara Bermain</h3>
+      <ul>
+        <li><b>Ketuk kartu</b> lalu <b>ketuk slot</b> untuk menaruhnya dari terkecil ke terbesar.</li>
+        <li>Awas: ada kartu <b>negatif</b>, kartu <b>hasil operasi</b> (hitung dulu!), dan <b>pecahan pengecoh</b>.</li>
+        <li><b>3 nyawa</b> ❤️, timer tiap soal, kombo 🔥 untuk bonus.</li>
+        <li>Taklukkan <b>5 level</b> untuk jadi Master Urutan!</li>
+      </ul>
+    </div>
+    <button id="btn-start" class="btn btn-primary btn-big">▶&nbsp; Mulai Bermain</button>
+    <button id="btn-mute" class="btn btn-ghost btn-small">🔊 Suara: Nyala</button>
+    <p class="back-link"><a href="../">← Kembali ke Arena</a></p>
+  </section>
+
+  <section id="screen-levels" class="screen">
+    <h2>🗺️ Pilih Level</h2>
+    <p class="hint">Selesaikan satu level untuk membuka level berikutnya.</p>
+    <div id="level-grid"></div>
+    <button id="btn-back-start" class="btn btn-ghost">← Kembali</button>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <header class="hud">
+      <div class="hud-item">🎯 <span id="hud-level">1</span></div>
+      <div class="hud-item"><span id="hud-lives">❤️❤️❤️</span></div>
+      <div class="hud-item">🔥 <span id="hud-combo">–</span></div>
+      <div class="hud-item">⭐ <span id="hud-score">0</span></div>
+    </header>
+    <div class="timer"><div id="timer-fill"></div></div>
+    <div id="q-progress" class="q-progress">Soal 1/6</div>
+    <div class="card">
+      <p class="eq-hint">Terkecil → terbesar. Ketuk kartu, lalu ketuk slot.</p>
+      <div id="slots" class="slots"></div>
+      <div id="hand" class="hand"></div>
+      <div class="btn-row">
+        <button id="btn-reset" class="btn">↺ Kosongkan</button>
+        <button id="btn-check" class="btn btn-primary" disabled>✓ Periksa</button>
+      </div>
+    </div>
+    <div id="feedback" class="card feedback hidden">
+      <p id="fb-title" class="fb-title"></p>
+      <p id="fb-explain" class="fb-explain"></p>
+      <button id="btn-next" class="btn btn-primary">Lanjut →</button>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <h2 id="res-title">🎉 Level Lolos!</h2>
+    <div id="res-stats" class="card stats"></div>
+    <div class="btn-row">
+      <button id="btn-retry" class="btn">🔄 Ulangi</button>
+      <button id="btn-next-level" class="btn btn-primary">Level Berikutnya →</button>
+    </div>
+    <button id="btn-to-levels" class="btn btn-ghost">🗺️ Pilih Level</button>
+  </section>
+
+  <section id="screen-victory" class="screen">
+    <div class="hero">
+      <div class="logo">🏆</div>
+      <h1>Master Urutan!</h1>
+      <p class="subtitle">Kamu menaklukkan seluruh 5 level. Luar biasa!</p>
+    </div>
+    <div id="victory-stats" class="card stats"></div>
+    <div class="btn-row">
+      <button id="btn-again" class="btn btn-primary">🔄 Main Lagi</button>
+      <button id="btn-victory-levels" class="btn btn-ghost">🗺️ Pilih Level</button>
+    </div>
+    <p class="back-link"><a href="../">← Kembali ke Arena</a></p>
+  </section>
+</div>
+<footer class="foot">Urutkan Kilat &bull; Arena Bilangan Bulat</footer>
+<script src="js/puzzles.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

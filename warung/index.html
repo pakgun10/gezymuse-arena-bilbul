@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1b3a">
+<title>Warung Pintar — Arena Bilangan Bulat</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <section id="screen-start" class="screen active">
+    <div class="hero">
+      <div class="logo">🏪</div>
+      <h1>Warung Pintar</h1>
+      <p class="subtitle">Kelola kantin sekolah selama <b>5 hari</b>!</p>
+    </div>
+    <div class="card howto">
+      <h3>🎮 Cara Bermain</h3>
+      <ul>
+        <li>Modal awal <b>Rp150.000</b>. Tiap hari: <b>belanja stok</b> → <b>tentukan harga jual</b> → <b>jualan</b> → <b>atur bank</b> → <b>laporan</b>.</li>
+        <li>Harga terlalu mahal → sepi pembeli. Terlalu murah → untung tipis. Temukan harga terbaik!</li>
+        <li>Ada <b>kejadian tak terduga</b>: barang kedaluwarsa, teman meminjam uang, kulakan berutang.</li>
+        <li>Uang bisa <b>ditabung</b> (bunga 2%/hari) dan <b>utang harus dibayar</b>.</li>
+        <li>Skor akhir = kas + tabungan + nilai stok + piutang − utang. Jadilah <b>Juragan Kantin</b>! 🏆</li>
+      </ul>
+    </div>
+    <button id="btn-start" class="btn btn-primary btn-big">🏪 Buka Warung!</button>
+    <button id="btn-mute" class="btn btn-ghost btn-small">🔊 Suara: Nyala</button>
+    <p class="back-link"><a href="../">← Kembali ke Arena</a></p>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <div class="daybar">
+      <div class="daypill">📅 Hari <span id="day-num">1</span>/5</div>
+      <div class="money">💰 <span id="m-cash">Rp0</span></div>
+      <div class="money">🏦 <span id="m-save">Rp0</span></div>
+      <div class="money debt hidden" id="m-debt-wrap">📝 <span id="m-debt">Rp0</span></div>
+    </div>
+    <h2 id="phase-title" class="phase-title"></h2>
+    <div id="phase-body"></div>
+  </section>
+
+  <section id="screen-end" class="screen">
+    <div class="hero">
+      <div class="logo" id="end-emoji">🏆</div>
+      <h1 id="end-title">Juragan Kantin!</h1>
+      <p class="subtitle" id="end-sub"></p>
+    </div>
+    <div id="end-stats" class="card stats"></div>
+    <div class="btn-row">
+      <button id="btn-again" class="btn btn-primary">🔄 Main Lagi</button>
+      <button id="btn-end-arena" class="btn btn-ghost">🏟️ Kembali ke Arena</button>
+    </div>
+  </section>
+</div>
+<footer class="foot">Warung Pintar &bull; Arena Bilangan Bulat</footer>
+<script src="js/economy.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

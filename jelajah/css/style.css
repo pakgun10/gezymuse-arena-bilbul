@@ -1,0 +1,115 @@
+/* ============ Jelajah Garis Bilangan ============ */
+:root {
+  --bg1: #1a1b3a; --bg2: #2d1b4e;
+  --card: rgba(255,255,255,.07); --card-border: rgba(255,255,255,.14);
+  --accent: #ffd166; --accent2: #06d6a0; --danger: #ef476f;
+  --text: #f4f1ff; --muted: #b9b3d9; --radius: 18px;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0; min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: linear-gradient(160deg, var(--bg1), var(--bg2) 60%, #3a1c5e);
+  background-attachment: fixed;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 14px 40px;
+}
+#app { width: 100%; max-width: 720px; }
+.topbar { text-align: center; margin-bottom: 8px; position: relative; }
+.topbar h1 { font-size: 1.7rem; margin: 0.2em 0; }
+.subtitle { color: var(--muted); margin: 0; font-size: 0.95rem; }
+.back {
+  position: absolute; left: 0; top: 6px;
+  color: var(--accent); text-decoration: none; font-weight: 700; font-size: 0.95rem;
+}
+
+.tabs { display: flex; gap: 8px; margin: 14px 0; }
+.tab {
+  flex: 1; padding: 12px 6px; font-size: 0.95rem; font-weight: 700;
+  font-family: inherit; color: var(--muted);
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 12px; cursor: pointer;
+}
+.tab.active { color: #241203; background: linear-gradient(135deg, #ff9f1c, #ff6b35); border: none; }
+.tabpanel { display: none; animation: fadeUp .3s ease; }
+.tabpanel.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.hint { color: var(--muted); font-size: 0.92rem; text-align: center; }
+.hint b { color: var(--text); }
+
+.card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 18px; margin: 14px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.placeholder { color: var(--muted); text-align: center; margin: 6px 0; }
+
+/* garis bilangan */
+.nl-wrap {
+  overflow-x: auto; border-radius: var(--radius);
+  background: rgba(0,0,0,.25); border: 1px solid var(--card-border);
+  margin: 10px 0;
+}
+.nl-wrap svg { display: block; }
+
+/* kartu info */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.info-item { background: rgba(255,255,255,.06); border-radius: 12px; padding: 10px 12px; }
+.info-item .k { font-size: 0.78rem; color: var(--muted); }
+.info-item .v { font-size: 1.25rem; font-weight: 800; color: var(--accent); }
+.info-sentence { margin: 12px 0 0; line-height: 1.6; color: var(--text); }
+.info-num { font-size: 2.2rem; font-weight: 800; text-align: center; color: var(--accent2); margin: 0; }
+
+/* bandingkan */
+.compare-big { font-size: 2.4rem; font-weight: 800; text-align: center; margin: 4px 0; }
+.compare-big .ca { color: #4cc9f0; }
+.compare-big .cb { color: var(--accent); }
+.compare-why { color: var(--muted); line-height: 1.6; text-align: center; margin: 6px 0 0; }
+.compare-why b { color: var(--text); }
+
+/* latihan */
+.slots, .hand { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
+.slot, .chip {
+  min-width: 56px; min-height: 56px; padding: 6px 10px;
+  border-radius: 12px; font-size: 1.25rem; font-weight: 800; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.slot {
+  border: 3px dashed rgba(255,255,255,.35); background: rgba(255,255,255,.04);
+  color: var(--text); cursor: pointer;
+}
+.slot.filled { border-style: solid; border-color: var(--accent2); background: rgba(6,214,160,.14); }
+.slot.wrongmark { border-color: var(--danger); background: rgba(239,71,111,.14); }
+.chip {
+  border: none; cursor: pointer; color: #241203;
+  background: linear-gradient(160deg, #ffe8b3, #ffd166);
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+}
+.chip.selected { outline: 3px solid #fff; transform: translateY(-3px); }
+
+.btn {
+  display: block; width: 100%; margin: 10px 0; padding: 13px 16px;
+  font-size: 1rem; font-weight: 700; font-family: inherit; color: var(--text);
+  background: rgba(255,255,255,.1); border: 1px solid var(--card-border);
+  border-radius: 14px; cursor: pointer;
+}
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-primary {
+  background: linear-gradient(135deg, #ff9f1c, #ff6b35); border: none; color: #241203;
+}
+.btn-ghost { background: transparent; }
+.btn-row { display: flex; gap: 10px; }
+.btn-row .btn { margin: 8px 0; }
+.hidden { display: none !important; }
+
+.ex-feedback { text-align: center; font-weight: 700; min-height: 1.6em; }
+.ex-feedback.ok { color: var(--accent2); }
+.ex-feedback.bad { color: var(--danger); }
+.star-note { text-align: center; color: var(--muted); font-size: 0.9rem; }
+.star-note b { color: var(--accent); }
+
+.foot { text-align: center; margin-top: 24px; }
+.foot a { color: var(--muted); font-size: 0.9rem; text-decoration: none; }
+.foot a:hover { color: var(--accent); }

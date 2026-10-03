@@ -89,7 +89,8 @@ function fmt(n) { return Number(n).toLocaleString('id-ID'); }
     board.placed.forEach(function (c, i) {
       (function (idx) {
         var b = document.createElement('button');
-        b.className = 'slot' + (c ? ' filled' : '');
+        b.className = 'slot' + (c ? ' filled' : '') +
+          ((board.wrong || []).indexOf(idx) !== -1 ? ' wrongmark' : '');
         b.setAttribute('data-slot', idx);
         b.textContent = c ? c.label : '?';
         b.disabled = board.locked;
@@ -219,8 +220,7 @@ function fmt(n) { return Number(n).toLocaleString('id-ID'); }
       /* tandai posisi salah pertama */
       var badIdx = -1;
       for (var k = 1; k < vals.length; k++) if (vals[k - 1] >= vals[k]) { badIdx = k; break; }
-      var slots = $('slots').children;
-      if (badIdx > 0) { slots[badIdx - 1].classList.add('wrongmark'); slots[badIdx].classList.add('wrongmark'); }
+      if (badIdx > 0) board.wrong = [badIdx - 1, badIdx];
       showFeedback(false, '❌ Belum tepat',
         'Urutan yang benar: <b>' + correctOrder().map(fmtVal).join(' &lt; ') + '</b>.<br>Ingat: semakin ke kiri garis bilangan, semakin kecil!');
     }

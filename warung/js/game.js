@@ -348,6 +348,7 @@
 
   /* ---------- wiring ---------- */
   $('btn-start').addEventListener('click', function () { Sfx.click(); startGame(); });
+  $('btn-quit').addEventListener('click', function () { Sfx.click(); show('screen-start'); });
   $('btn-again').addEventListener('click', function () { Sfx.click(); startGame(); });
   $('btn-end-arena').addEventListener('click', function () { window.location.href = '../'; });
 

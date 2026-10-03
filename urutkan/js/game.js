@@ -294,6 +294,12 @@ function fmt(n) { return Number(n).toLocaleString('id-ID'); }
 
   $('btn-start').addEventListener('click', function () { Sfx.click(); renderLevels(); show('screen-levels'); });
   $('btn-back-start').addEventListener('click', function () { Sfx.click(); show('screen-start'); });
+  $('btn-quit').addEventListener('click', function () {
+    Sfx.click();
+    stopTimer();
+    renderLevels();
+    show('screen-levels');
+  });
   $('btn-check').addEventListener('click', onCheck);
   $('btn-reset').addEventListener('click', onReset);
   $('btn-next').addEventListener('click', next);

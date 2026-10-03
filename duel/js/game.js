@@ -204,6 +204,7 @@ function fmt(n) { return Number(n).toLocaleString('id-ID'); }
   }
 
   $('btn-start').addEventListener('click', function () { Sfx.click(); startDuel(); });
+  $('btn-quit').addEventListener('click', function () { Sfx.click(); stopTimer(); show('screen-start'); });
   $('btn-next-round').addEventListener('click', function () {
     Sfx.click();
     D.roundIdx++;

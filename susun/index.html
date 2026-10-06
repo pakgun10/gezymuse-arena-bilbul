@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#01579B">
+<title>Susun Bilangan Bulat — Misi Mengurutkan Operasi Hitung</title>
+<meta name="description" content="Game matematika SMP: susun kartu bilangan bulat & hasil operasi hitung dari terkecil ke terbesar.">
+<style>
+:root{
+  --bg:#E3F2FD; --card:#ffffff; --ink:#0D3B66; --muted:#4a6fa5;
+  --accent:#0288D1; --accent-dark:#01579B; --accent-darker:#01487e;
+  --line:#90CAF9; --slot-bg:#F5FBFF; --ok:#2E7D32; --bad:#C62828;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{
+  margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;
+}
+#app{max-width:960px;margin:0 auto;padding:14px 14px 30px;}
+.screen{display:none;}
+.screen.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.hero{text-align:center;padding:26px 12px 10px;}
+.hero .logo{font-size:56px;}
+.hero h1{color:var(--accent-dark);margin:8px 0 4px;font-size:30px;}
+.hero .subtitle{color:var(--muted);margin:0 0 6px;}
+.card{
+  background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin:12px 0;box-shadow:0 2px 8px rgba(1,87,155,.08);
+}
+.howto h3{margin:0 0 8px;color:var(--accent-dark);}
+.howto ul{margin:0;padding-left:20px;line-height:1.65;color:var(--ink);}
+.btn{
+  display:inline-block;border:2px solid var(--accent);background:#fff;color:var(--accent-dark);
+  border-radius:10px;padding:10px 18px;font-size:16px;font-weight:700;cursor:pointer;margin:4px;
+}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn-primary:disabled{background:#B0BEC5;border-color:#B0BEC5;cursor:not-allowed;}
+.btn-big{font-size:19px;padding:13px 30px;display:block;margin:14px auto;}
+.btn-small{font-size:14px;padding:8px 14px;}
+.btn-ghost{border-color:var(--line);color:var(--muted);background:transparent;}
+.btn-quit{
+  background:var(--accent-dark);color:#fff;border:none;border-radius:10px;
+  width:42px;height:42px;font-size:18px;font-weight:800;cursor:pointer;flex:0 0 auto;
+}
+.hidden{display:none !important;}
+.hint{color:var(--muted);}
+/* ---------- level select ---------- */
+#level-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:12px 0;}
+.level-card{
+  background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;
+  text-align:left;font-family:inherit;color:var(--ink);
+}
+.level-card:active{transform:scale(.98);}
+.level-card.locked{opacity:.55;cursor:not-allowed;background:#F5F5F5;}
+.lv-icon{font-size:32px;}
+.lv-name{font-weight:800;color:var(--accent-dark);margin:6px 0 2px;}
+.lv-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+.lv-stars{color:#F9A825;font-size:18px;margin-top:6px;letter-spacing:2px;}
+.lv-best{font-size:13px;color:var(--muted);margin-top:2px;}
+.lv-lock{font-size:12px;color:var(--muted);margin-top:6px;}
+/* ---------- game top ---------- */
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.game-title{color:var(--accent-dark);font-size:24px;margin:0;flex:1;}
+.hud-boxes{display:flex;gap:8px;}
+.hud-box{
+  background:#fff;border:2px solid var(--line);border-radius:10px;
+  min-width:74px;text-align:center;padding:4px 8px;
+}
+.hud-label{display:block;font-size:10px;letter-spacing:1px;color:var(--muted);font-weight:700;}
+.hud-box b{font-size:17px;color:var(--accent-dark);}
+.hud-box.danger b{color:var(--bad);}
+.progress-wrap{display:flex;align-items:center;gap:10px;margin:6px 0 12px;}
+.progress{flex:1;height:10px;background:#BBDEFB;border-radius:6px;overflow:hidden;}
+#progress-fill{height:100%;width:0;background:linear-gradient(90deg,#0288D1,#01579B);border-radius:6px;transition:width .3s;}
+#progress-text{font-size:13px;color:var(--muted);font-weight:700;white-space:nowrap;}
+.level-head{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;
+  background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:12px;
+}
+.level-tag{font-size:12px;font-weight:800;letter-spacing:1px;color:#EF6C00;}
+.level-head h2{margin:2px 0 4px;color:var(--accent-dark);font-size:22px;}
+.instr{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:560px;}
+.level-actions{display:flex;gap:6px;flex-wrap:wrap;}
+/* ---------- board ---------- */
+.board{display:flex;gap:12px;align-items:stretch;}
+.hand-col{flex:0 0 250px;background:#FFF8E1;border:2px solid #FFE082;border-radius:14px;padding:10px;}
+.hand-col h4{margin:2px 0 10px;font-size:12px;letter-spacing:1px;color:#8D6E00;}
+#hand{display:flex;flex-direction:column;gap:8px;}
+.playing-card{
+  background:#fff;border:2px solid var(--accent);border-radius:10px;padding:10px 8px;
+  font-size:16px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;line-height:1.35;
+}
+.playing-card.selected{outline:3px solid var(--accent);background:#E1F5FE;}
+.playing-card:disabled{cursor:default;}
+.hand-empty{color:var(--muted);font-size:13px;text-align:center;padding:8px;}
+.slots-col{flex:1;display:flex;flex-direction:column;gap:8px;}
+.slot{
+  display:flex;align-items:center;gap:10px;background:var(--slot-bg);
+  border:2px solid var(--line);border-radius:10px;padding:8px 12px;min-height:58px;
+  cursor:pointer;font-family:inherit;text-align:left;width:100%;
+}
+.slot .num{font-weight:800;color:#EF6C00;font-size:18px;min-width:30px;}
+.slot .ph{flex:1;border:2px dashed #B0BEC5;border-radius:8px;color:#90A4AE;font-size:14px;
+  padding:10px;text-align:center;background:#fff;}
+.slot .val{flex:1;font-size:16px;font-weight:700;color:var(--ink);text-align:center;}
+.slot.filled{border-color:var(--accent);background:#E1F5FE;}
+.slot.wrongmark{border-color:var(--bad);background:#FFEBEE;}
+.slot.wrongmark .val{color:var(--bad);}
+.slot:disabled{cursor:default;}
+.board-foot{
+  margin-top:12px;background:#FFF3E0;border:2px solid #FFCC80;border-radius:10px;
+  padding:10px 14px;font-weight:700;color:#7b4d00;font-size:14px;
+}
+.btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+/* ---------- feedback / result ---------- */
+.feedback{border-color:var(--accent);}
+.fb-title{font-size:19px;font-weight:800;margin:0 0 6px;}
+.fb-title.ok{color:var(--ok);}
+.fb-title.bad{color:var(--bad);}
+.fb-explain{line-height:1.6;font-size:15px;margin:0 0 10px;}
+.stats .stat-big{font-size:48px;text-align:center;}
+.stat-row{display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px dashed var(--line);font-size:15px;}
+.stat-row:last-of-type{border-bottom:none;}
+.stat-note{text-align:center;color:var(--muted);font-size:14px;}
+.stars-big{font-size:40px;color:#F9A825;text-align:center;letter-spacing:6px;margin:4px 0;}
+.back-link{text-align:center;margin-top:14px;}
+.back-link a{color:#4a6fa5;font-size:.9rem;text-decoration:none;}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:18px 0 8px;}
+@media (max-width:640px){
+  .board{flex-direction:column;}
+  .hand-col{flex:none;}
+  #hand{flex-direction:row;flex-wrap:wrap;}
+  .playing-card{flex:1 1 44%;font-size:14px;}
+  .game-title{font-size:19px;}
+  .hud-box{min-width:62px;}
+  .level-head h2{font-size:18px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section id="screen-start" class="screen active">
+    <div class="hero">
+      <div class="logo">🔢</div>
+      <h1>Susun Bilangan Bulat</h1>
+      <p class="subtitle">Misi mengurutkan <b>operasi hitung bilangan bulat</b>!</p>
+    </div>
+    <div class="card howto">
+      <h3>🎮 Cara Bermain</h3>
+      <ul>
+        <li><b>Ketuk kartu</b> lalu <b>ketuk slot 01–05</b> untuk menyusun urutan yang benar.</li>
+        <li>Ketuk kartu yang sudah terpasang untuk <b>mengembalikannya</b> ke tangan.</li>
+        <li>Semua slot terisi → <b>otomatis diperiksa</b>. Benar dapat <b>100 × kombo</b> 🔥!</li>
+        <li>Salah: <b>nyawa −1</b> ❤️, slot yang keliru ditandai <b style="color:#C62828">merah</b> — coba lagi!</li>
+        <li><b>3 nyawa</b>, timer tiap soal, <b>5 level</b> berjenjang untuk jadi Master Bilangan Bulat 🏆.</li>
+      </ul>
+    </div>
+    <button id="btn-start" class="btn btn-primary btn-big">▶&nbsp; Mulai Bermain</button>
+    <button id="btn-mute" class="btn btn-ghost btn-small">🔊 Suara: Nyala</button>
+    <p class="back-link"><a href="../">← Kembali ke Arena</a></p>
+  </section>
+
+  <section id="screen-levels" class="screen">
+    <h2 style="color:#01579B">🗺️ Pilih Level</h2>
+    <p class="hint">Selesaikan satu level untuk membuka level berikutnya.</p>
+    <div id="level-grid"></div>
+    <button id="btn-back-start" class="btn btn-ghost">← Kembali</button>
+  </section>
+
+  <section id="screen-game" class="screen">
+    <div class="topbar">
+      <button id="btn-quit" class="btn-quit" title="Keluar dari permainan">✕</button>
+      <h1 class="game-title">Susun Bilangan Bulat</h1>
+      <div class="hud-boxes">
+        <div class="hud-box"><span class="hud-label">SKOR</span><b id="hud-score">0</b></div>
+        <div class="hud-box"><span class="hud-label">NYAWA</span><b id="hud-lives">❤️❤️❤️</b></div>
+        <div class="hud-box" id="hud-time-box"><span class="hud-label">WAKTU</span><b id="hud-time">1:30</b></div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress"><div id="progress-fill"></div></div>
+      <span id="progress-text">Progres 1/25</span>
+    </div>
+    <div class="level-head">
+      <div>
+        <div id="level-tag" class="level-tag">LEVEL 1 DARI 5</div>
+        <h2 id="level-name">Mengurutkan Bilangan</h2>
+        <p id="level-instr" class="instr"></p>
+      </div>
+      <div class="level-actions">
+        <button id="btn-hint" class="btn btn-small">💡 Petunjuk −40</button>
+        <button id="btn-retry-level" class="btn btn-small">↺ Ulangi level</button>
+      </div>
+    </div>
+    <div class="board">
+      <div class="hand-col">
+        <h4 id="hand-label">KARTU BILANGAN</h4>
+        <div id="hand"></div>
+      </div>
+      <div class="slots-col" id="slots"></div>
+    </div>
+    <div class="board-foot" id="board-foot"></div>
+    <div class="btn-row">
+      <button id="btn-clear" class="btn btn-small">↺ Kosongkan</button>
+    </div>
+    <div id="feedback" class="card feedback hidden">
+      <p id="fb-title" class="fb-title"></p>
+      <p id="fb-explain" class="fb-explain"></p>
+      <div class="btn-row"><button id="btn-next" class="btn btn-primary">Lanjut →</button></div>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <h2 id="res-title" style="color:#01579B">🎉 Level Lolos!</h2>
+    <div id="res-stats" class="card stats"></div>
+    <div class="btn-row">
+      <button id="btn-retry" class="btn">🔄 Ulangi</button>
+      <button id="btn-next-level" class="btn btn-primary">Level Berikutnya →</button>
+    </div>
+    <button id="btn-to-levels" class="btn btn-ghost">🗺️ Pilih Level</button>
+  </section>
+
+  <section id="screen-victory" class="screen">
+    <div class="hero">
+      <div class="logo">🏆</div>
+      <h1>Master Bilangan Bulat!</h1>
+      <p class="subtitle">Kamu menaklukkan seluruh 5 level. Luar biasa! 🎓</p>
+    </div>
+    <div id="victory-stats" class="card stats"></div>
+    <div class="btn-row">
+      <button id="btn-again" class="btn btn-primary">🔄 Main Lagi</button>
+      <button id="btn-victory-levels" class="btn btn-ghost">🗺️ Pilih Level</button>
+    </div>
+  </section>
+
+</div>
+<footer class="foot">Susun Bilangan Bulat &bull; Arena Bilangan Bulat</footer>
+<script>
+/*===== LOGIC-START =====*/
+/* Susun Bilangan Bulat — logika murni (generator, validasi, alur).
+ * Tidak menyentuh DOM: bisa dieksekusi & diuji dengan Node.
+ * Kartu: { cid, label, orderKey } — urutan benar = sort by orderKey
+ * (asc untuk level 1-3, desc untuk level 4; level 5 mewarisi pola dasar).
+ */
+'use strict';
+
+var MINUS = '−'; /* U+2212 */
+
+function rand(lo, hi) { return lo + Math.floor(Math.random() * (hi - lo + 1)); }
+function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+function shuffle(a) {
+  var x = a.slice();
+  for (var i = x.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = x[i]; x[i] = x[j]; x[j] = t;
+  }
+  return x;
+}
+/* Tampilan angka: negatif memakai − (U+2212). */
+function dsp(n) { return n < 0 ? MINUS + String(-n) : String(n); }
+/* Tampilan operan: negatif dibungkus kurung agar "8 − (−3)" terbaca jelas. */
+function dspOp(n) { return n < 0 ? '(' + dsp(n) + ')' : String(n); }
+/* Angka untuk string ekspresi JS (evaluator independen di uji). */
+function jsNum(n) { return n < 0 ? '(' + n + ')' : String(n); }
+
+var _cid = 0;
+function mkCard(label, orderKey) {
+  return { cid: 'c' + (++_cid), label: label, orderKey: orderKey };
+}
+
+var LEVELS = [
+  { id: 1, name: 'Mengurutkan Bilangan', icon: '🔢', time: 90, count: 5,
+    desc: 'Bilangan bulat −25…25', handLabel: 'KARTU BILANGAN',
+    instr: 'Susun lima bilangan dari yang TERKECIL hingga TERBESAR.',
+    foot: 'Susun dari bilangan terkecil sampai terbesar.' },
+  { id: 2, name: 'Membandingkan Hasil Operasi', icon: '🧮', time: 90, count: 5,
+    desc: 'Hitung hasil + − × ÷', handLabel: 'KARTU OPERASI',
+    instr: 'Hitung dulu hasil tiap operasi, lalu susun dari TERKECIL hingga TERBESAR.',
+    foot: 'Hitung hasilnya dulu, lalu susun dari terkecil ke terbesar.' },
+  { id: 3, name: 'Rekonstruksi Langkah', icon: '🧩', time: 90, count: 5,
+    desc: 'Urutkan langkah penyelesaian', handLabel: 'KARTU LANGKAH',
+    instr: 'Susun lima langkah dari yang PERTAMA hingga TERAKHIR. Urutan operasi: kurung → ×/÷ → +/−.',
+    foot: 'Susun langkah penyelesaian dari pertama sampai terakhir.' },
+  { id: 4, name: 'Urutan Terbalik', icon: '🔀', time: 90, count: 5,
+    desc: 'Bilangan & operasi, dibalik', handLabel: 'KARTU CAMPURAN',
+    instr: 'Susun dari yang TERBESAR hingga TERKECIL. Hitung dulu kartu operasinya!',
+    foot: 'Susun dari terbesar sampai terkecil.' },
+  { id: 5, name: 'Bos Campuran', icon: '👑', time: 60, count: 5,
+    desc: 'Acak semua pola, waktu 60 dtk', handLabel: 'KARTU ACAK',
+    instr: 'Campuran semua pola! Susun dengan benar — waktunya lebih singkat.',
+    foot: 'Bos terakhir: susun dengan tepat dan cepat!' }
+];
+
+/* ---------- Level 1: bilangan bulat unik ---------- */
+function genL1(qIdx) {
+  var lo = qIdx < 2 ? -10 : -25, hi = qIdx < 2 ? 10 : 25;
+  var vals = [], guard = 0;
+  while (vals.length < 5 && guard++ < 500) {
+    var v = rand(lo, hi);
+    if (vals.indexOf(v) < 0) vals.push(v);
+  }
+  var cards = vals.map(function (v) { return mkCard(dsp(v), v); });
+  return { base: 1, dir: 'asc', cards: shuffle(cards) };
+}
+
+/* ---------- Ekspresi satu operasi (dipakai level 2 & 4) ---------- */
+function genOneExpr(maxAbs) {
+  var op = pick(['+', '−', '×', '÷']);
+  var a, b, val, label;
+  if (op === '÷') {
+    b = rand(-9, 9); if (b === 0) b = 3;
+    var q = rand(-9, 9);
+    a = b * q; val = q; /* pembagian selalu exact */
+    label = dspOp(a) + ' ÷ ' + dspOp(b);
+  } else {
+    a = rand(-maxAbs, maxAbs); b = rand(-maxAbs, maxAbs);
+    if (op === '+')      { val = a + b; label = dspOp(a) + ' + ' + dspOp(b); }
+    else if (op === '−') { val = a - b; label = dspOp(a) + ' − ' + dspOp(b); }
+    else                 { val = a * b; label = dspOp(a) + ' × ' + dspOp(b); }
+  }
+  var c = mkCard(label, val);
+  c.a = a; c.b = b; c.op = op; c.val = val;
+  return c;
+}
+
+/* ---------- Level 2: hasil operasi, urut naik ---------- */
+function genL2() {
+  var cards = [], vals = [], guard = 0;
+  while (cards.length < 5 && guard++ < 1200) {
+    var e = genOneExpr(12);
+    if (vals.indexOf(e.val) < 0) { vals.push(e.val); cards.push(e); }
+  }
+  return { base: 2, dir: 'asc', cards: shuffle(cards) };
+}
+
+/* ---------- Level 4: campuran bilangan & ekspresi, urut TURUN ---------- */
+function genL4() {
+  var cards = [], vals = [], guard = 0;
+  while (cards.length < 5 && guard++ < 1500) {
+    var e;
+    if (Math.random() < 0.45) {
+      var v = rand(-20, 20);
+      e = mkCard(dsp(v), v); e.val = v; e.op = 'num';
+    } else {
+      e = genOneExpr(10);
+    }
+    if (vals.indexOf(e.val) < 0) { vals.push(e.val); cards.push(e); }
+  }
+  return { base: 4, dir: 'desc', cards: shuffle(cards) };
+}
+
+/* ---------- Level 3: rekonstruksi langkah operasi campuran ----------
+ * Tiga pola, tiap pola 4 operasi → 4 langkah + kartu jawaban akhir = 5 kartu.
+ * orderKey = nomor urut langkah (0..4). Semua hasil dijamin bulat. */
+function stepCard(label, exprJs, value, kind, seq) {
+  var c = mkCard(label, seq);
+  c.exprJs = exprJs; c.stepValue = value; c.kind = kind;
+  return c;
+}
+function genL3() {
+  var p = pick([1, 2, 3]);
+  var steps, exprJs;
+  if (p === 1) {
+    /* (a+b)×c − d÷e : kurung → × → ÷ → − */
+    var a = rand(2, 9), b = rand(2, 9), c = rand(2, 6);
+    var e = rand(2, 6), q0 = rand(2, 9), d = e * q0;
+    if (Math.random() < 0.3) { d = -d; q0 = -q0; }
+    var X = a + b, Y = X * c, Z = q0, W = Y - Z;
+    exprJs = '(' + a + '+' + b + ')*' + jsNum(c) + '-' + jsNum(d) + '/' + e;
+    steps = [
+      stepCard('Hitung (' + a + ' + ' + b + ') = ' + dsp(X), '(' + a + '+' + b + ')', X, 'paren', 0),
+      stepCard('Hitung ' + dspOp(X) + ' × ' + c + ' = ' + dsp(Y), jsNum(X) + '*' + c, Y, 'mul', 1),
+      stepCard('Hitung ' + dspOp(d) + ' ÷ ' + e + ' = ' + dsp(Z), jsNum(d) + '/' + e, Z, 'div', 2),
+      stepCard('Hitung ' + dspOp(Y) + ' − ' + dspOp(Z) + ' = ' + dsp(W), jsNum(Y) + '-' + jsNum(Z), W, 'sub', 3),
+      stepCard('Jawaban akhir: ' + dsp(W), exprJs, W, 'final', 4)
+    ];
+  } else if (p === 2) {
+    /* a − b÷(c+d) + e : kurung → ÷ → − → + */
+    var s = rand(2, 6), cc = rand(1, s - 1), dd = s - cc;
+    var qq = rand(2, 9), bb = s * qq;
+    if (Math.random() < 0.3) { bb = -bb; qq = -qq; }
+    var aa = rand(5, 20), ee = rand(2, 10);
+    var S2 = s, Q2 = qq, R2 = aa - qq, F2 = R2 + ee;
+    exprJs = aa + '-' + jsNum(bb) + '/(' + cc + '+' + dd + ')+' + ee;
+    steps = [
+      stepCard('Hitung (' + cc + ' + ' + dd + ') = ' + dsp(S2), '(' + cc + '+' + dd + ')', S2, 'paren', 0),
+      stepCard('Hitung ' + dspOp(bb) + ' ÷ ' + dspOp(S2) + ' = ' + dsp(Q2), jsNum(bb) + '/' + jsNum(S2), Q2, 'div', 1),
+      stepCard('Hitung ' + dspOp(aa) + ' − ' + dspOp(Q2) + ' = ' + dsp(R2), jsNum(aa) + '-' + jsNum(Q2), R2, 'sub', 2),
+      stepCard('Hitung ' + dspOp(R2) + ' + ' + ee + ' = ' + dsp(F2), jsNum(R2) + '+' + ee, F2, 'add', 3),
+      stepCard('Jawaban akhir: ' + dsp(F2), exprJs, F2, 'final', 4)
+    ];
+  } else {
+    /* a + b×(c−d) − e : kurung → × → + → − */
+    var c3 = rand(3, 9), d3 = rand(1, 9), b3 = rand(2, 8), a3 = rand(2, 15), e3 = rand(2, 9);
+    var X3 = c3 - d3, Y3 = b3 * X3, Z3 = a3 + Y3, W3 = Z3 - e3;
+    exprJs = a3 + '+' + b3 + '*(' + c3 + '-' + d3 + ')-' + e3;
+    steps = [
+      stepCard('Hitung (' + c3 + ' − ' + d3 + ') = ' + dsp(X3), '(' + c3 + '-' + d3 + ')', X3, 'paren', 0),
+      stepCard('Hitung ' + dspOp(b3) + ' × ' + dspOp(X3) + ' = ' + dsp(Y3), jsNum(b3) + '*' + jsNum(X3), Y3, 'mul', 1),
+      stepCard('Hitung ' + dspOp(a3) + ' + ' + dspOp(Y3) + ' = ' + dsp(Z3), jsNum(a3) + '+' + jsNum(Y3), Z3, 'add', 2),
+      stepCard('Hitung ' + dspOp(Z3) + ' − ' + e3 + ' = ' + dsp(W3), jsNum(Z3) + '-' + e3, W3, 'sub', 3),
+      stepCard('Jawaban akhir: ' + dsp(W3), exprJs, W3, 'final', 4)
+    ];
+  }
+  return { base: 3, dir: 'asc', cards: shuffle(steps), steps: steps, exprJs: exprJs };
+}
+
+function genPuzzle(levelId, qIdx) {
+  if (levelId === 5) return genPuzzle(pick([1, 2, 3, 4]), qIdx);
+  if (levelId === 1) return genL1(qIdx || 0);
+  if (levelId === 2) return genL2();
+  if (levelId === 3) return genL3();
+  return genL4();
+}
+
+/* ---------- Validasi urutan ---------- */
+function correctOrder(cards, dir) {
+  var c = cards.slice();
+  c.sort(function (x, y) { return dir === 'desc' ? y.orderKey - x.orderKey : x.orderKey - y.orderKey; });
+  return c;
+}
+/* Mengembalikan { ok, wrongIdx } — wrongIdx = indeks slot yang tidak tepat. */
+function checkPlaced(placed, cards, dir) {
+  var co = correctOrder(cards, dir), wrong = [];
+  for (var i = 0; i < placed.length; i++) {
+    if (!placed[i] || placed[i].cid !== co[i].cid) wrong.push(i);
+  }
+  return { ok: wrong.length === 0, wrongIdx: wrong };
+}
+/* Teks pembahasan: urutan benar dalam label. */
+function orderLabels(cards, dir) {
+  return correctOrder(cards, dir).map(function (c) { return c.label; }).join(dir === 'desc' ? ' &gt; ' : ' &lt; ');
+}
+
+/* ---------- Petunjuk: taruh SATU kartu yang benar ke slot kosongnya ----------
+ * Mengembalikan indeks slot yang diisi, atau -1 bila tidak ada yang bisa diisi. */
+function hintMove(cards, placed, hand, dir) {
+  var co = correctOrder(cards, dir);
+  for (var i = 0; i < co.length; i++) {
+    if (placed[i]) continue;
+    var want = co[i], hi = -1, j;
+    for (j = 0; j < hand.length; j++) {
+      if (hand[j].cid === want.cid) { hi = j; break; }
+    }
+    if (hi >= 0) {
+      hand.splice(hi, 1);
+      placed[i] = want;
+      return i;
+    }
+    /* Kartu yang benar terlanjur terpasang di slot yang salah: pindahkan. */
+    for (j = 0; j < placed.length; j++) {
+      if (placed[j] && placed[j].cid === want.cid) {
+        placed[j] = null;
+        placed[i] = want;
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+
+/* ---------- Transisi alur (state: {score,combo,correct,lives,mistakes}) ---------- */
+function applyCorrect(st) {
+  st.combo++;
+  var pts = 100 * st.combo;
+  st.score += pts; st.correct++;
+  return pts;
+}
+function applyMiss(st) { /* jawaban salah ATAU waktu habis */
+  st.lives--; st.combo = 0; st.mistakes++;
+}
+function applyHintCost(st) {
+  st.score = Math.max(0, st.score - 40);
+}
+function starsFor(mistakes) {
+  return mistakes === 0 ? 3 : (mistakes <= 2 ? 2 : 1);
+}
+/*===== LOGIC-END =====*/
+</script>
+<script>
+/* =====================================================================
+ * Susun Bilangan Bulat — lapisan UI (DOM).
+ * Memakai fungsi murni dari blok LOGIC di atas.
+ * ===================================================================== */
+(function () {
+'use strict';
+
+function $(id) { return document.getElementById(id); }
+function fmt(n) { return Number(n).toLocaleString('id-ID'); }
+
+/* ---------- Sfx mungil (WebAudio, tanpa file) ---------- */
+var Sfx = (function () {
+  var ctx = null, muted = false;
+  function ac() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function tone(f, d, type, g) {
+    if (muted) return;
+    var c = ac(); if (!c) return;
+    try {
+      var o = c.createOscillator(), gn = c.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      gn.gain.setValueAtTime(g || 0.1, c.currentTime);
+      gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + d);
+      o.connect(gn); gn.connect(c.destination);
+      o.start(); o.stop(c.currentTime + d);
+    } catch (e) {}
+  }
+  return {
+    setMuted: function (m) { muted = m; },
+    isMuted: function () { return muted; },
+    click: function () { tone(620, 0.06, 'square', 0.04); },
+    correct: function () { tone(523, 0.1); setTimeout(function () { tone(784, 0.14); }, 90); },
+    wrong: function () { tone(200, 0.22, 'sawtooth', 0.07); },
+    tick: function () { tone(880, 0.05, 'square', 0.03); },
+    win: function () {
+      [523, 659, 784, 1047].forEach(function (f, i) {
+        setTimeout(function () { tone(f, 0.16); }, i * 120);
+      });
+    }
+  };
+})();
+
+/* ---------- Layar ---------- */
+var SCREENS = ['screen-start', 'screen-levels', 'screen-game', 'screen-result', 'screen-victory'];
+function show(id) {
+  SCREENS.forEach(function (s) { $(s).classList.toggle('active', s === id); });
+  window.scrollTo(0, 0);
+}
+
+/* ---------- Penyimpanan ---------- */
+var store = {
+  load: function () {
+    try {
+      return JSON.parse(localStorage.getItem('susunBilanganBulat')) ||
+        { unlocked: 1, best: {}, stars: {}, muted: false };
+    } catch (e) { return { unlocked: 1, best: {}, stars: {}, muted: false }; }
+  },
+  save: function (d) { try { localStorage.setItem('susunBilanganBulat', JSON.stringify(d)); } catch (e) {} }
+};
+var progress = store.load();
+Sfx.setMuted(!!progress.muted);
+
+var state = null; /* {cfg, puzzles, idx, score, scoreAtStart, lives, combo, correct, mistakes, answered, timerId, timeLeft} */
+var board = null; /* {cards, dir, placed, hand, selected, locked, wrong} */
+
+function renderLevels() {
+  var grid = $('level-grid');
+  grid.innerHTML = '';
+  LEVELS.forEach(function (lv) {
+    var locked = lv.id > progress.unlocked;
+    var best = progress.best[lv.id] || 0;
+    var stars = progress.stars[lv.id] || 0;
+    var card = document.createElement('button');
+    card.className = 'level-card' + (locked ? ' locked' : '');
+    card.innerHTML =
+      '<div class="lv-icon">' + lv.icon + '</div>' +
+      '<div class="lv-name">Level ' + lv.id + ': ' + lv.name + '</div>' +
+      '<div class="lv-desc">' + lv.desc + ' &bull; ' + lv.count + ' soal &bull; ' + lv.time + ' detik/soal</div>' +
+      (stars ? '<div class="lv-stars">' + '★'.repeat(stars) + '☆'.repeat(3 - stars) + '</div>' : '') +
+      (best ? '<div class="lv-best">⭐ Skor terbaik: ' + fmt(best) + '</div>' : '') +
+      (locked ? '<div class="lv-lock">🔒 Selesaikan level sebelumnya untuk membuka</div>' : '');
+    if (!locked) card.addEventListener('click', function () { Sfx.click(); startLevel(lv.id, 0); });
+    grid.appendChild(card);
+  });
+}
+
+function startLevel(id, carryScore) {
+  var cfg = LEVELS[id - 1];
+  var puzzles = [];
+  for (var q = 0; q < cfg.count; q++) puzzles.push(genPuzzle(id, q));
+  state = {
+    cfg: cfg, puzzles: puzzles, idx: 0,
+    score: carryScore || 0, scoreAtStart: carryScore || 0,
+    lives: 3, combo: 0, correct: 0, mistakes: 0,
+    answered: false, timerId: null, timeLeft: cfg.time
+  };
+  show('screen-game');
+  renderPuzzle();
+}
+
+function renderPuzzle() {
+  var p = state.puzzles[state.idx];
+  var meta = LEVELS[p.base - 1];
+  board = {
+    cards: p.cards, dir: p.dir,
+    placed: [null, null, null, null, null],
+    hand: p.cards.slice(), selected: null, locked: false, wrong: []
+  };
+  state.answered = false;
+  state.timeLeft = state.cfg.time;
+  $('level-tag').textContent = 'LEVEL ' + state.cfg.id + ' DARI 5';
+  $('level-name').textContent = state.cfg.id === 5 ? 'Bos Campuran · ' + meta.name : state.cfg.name;
+  $('level-instr').textContent = meta.instr;
+  $('hand-label').textContent = meta.handLabel;
+  $('board-foot').textContent = meta.foot;
+  updateHud();
+  var g = (state.cfg.id - 1) * state.cfg.count + state.idx + 1;
+  $('progress-text').textContent = 'Progres ' + g + '/25';
+  $('progress-fill').style.width = (g / 25 * 100) + '%';
+  $('feedback').classList.add('hidden');
+  renderBoard();
+  startTimer();
+}
+
+function updateHud() {
+  $('hud-score').textContent = fmt(state.score);
+  $('hud-lives').textContent = '❤️'.repeat(state.lives) + '🖤'.repeat(Math.max(0, 3 - state.lives));
+  $('hud-combo') && ($('hud-combo').textContent = state.combo);
+  paintTime();
+}
+function updateLives() {
+  $('hud-lives').textContent = '❤️'.repeat(state.lives) + '🖤'.repeat(Math.max(0, 3 - state.lives));
+}
+function paintTime() {
+  var s = Math.max(0, Math.ceil(state.timeLeft));
+  var txt = Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  $('hud-time').textContent = txt;
+  $('hud-time-box').classList.toggle('danger', s <= 15);
+}
+
+function renderBoard() {
+  var sh = $('slots');
+  sh.innerHTML = '';
+  board.placed.forEach(function (c, i) {
+    (function (idx) {
+      var b = document.createElement('button');
+      var isWrong = board.wrong.indexOf(idx) !== -1; /* penanda merah dipertahankan saat render ulang */
+      b.className = 'slot' + (c ? ' filled' : '') + (isWrong ? ' wrongmark' : '');
+      b.disabled = board.locked;
+      var num = String(idx + 1);
+      if (num.length < 2) num = '0' + num;
+      b.innerHTML = '<span class="num">' + num + '</span>' +
+        (c ? '<span class="val">' + c.label + '</span>'
+           : '<span class="ph">Taruh kartu di sini</span>');
+      b.addEventListener('click', function () { onSlotTap(idx); });
+      sh.appendChild(b);
+    })(i);
+  });
+  var hh = $('hand');
+  hh.innerHTML = '';
+  if (board.hand.length === 0) hh.innerHTML = '<span class="hand-empty">Semua kartu terpasang.</span>';
+  board.hand.forEach(function (c) {
+    var b = document.createElement('button');
+    b.className = 'playing-card' + (board.selected === c.cid ? ' selected' : '');
+    b.textContent = c.label;
+    b.disabled = board.locked;
+    b.addEventListener('click', function () { onCardTap(c.cid); });
+  hh.appendChild(b);
+  });
+}
+
+function findInHand(cid) {
+  for (var i = 0; i < board.hand.length; i++) if (board.hand[i].cid === cid) return board.hand[i];
+  return null;
+}
+function clearWrong() { board.wrong = []; }
+
+function onCardTap(cid) {
+  if (board.locked) return;
+  board.selected = (board.selected === cid) ? null : cid;
+  clearWrong();
+  Sfx.click();
+  renderBoard();
+}
+
+function onSlotTap(i) {
+  if (board.locked) return;
+  var cur = board.placed[i];
+  if (board.selected) {
+    var card = findInHand(board.selected);
+    if (!card) { board.selected = null; renderBoard(); return; }
+    if (cur) board.hand.push(cur);
+    board.placed[i] = card;
+    board.hand = board.hand.filter(function (c) { return c.cid !== card.cid; });
+    board.selected = null;
+    Sfx.click();
+  } else if (cur) {
+    board.hand.push(cur);
+    board.placed[i] = null;
+    Sfx.click();
+  } else return;
+  clearWrong();
+  renderBoard();
+  maybeAutoCheck();
+}
+
+function onClear() {
+  if (board.locked) return;
+  board.placed.forEach(function (c) { if (c) board.hand.push(c); });
+  board.placed = [null, null, null, null, null];
+  board.selected = null;
+  clearWrong();
+  Sfx.click();
+  renderBoard();
+}
+
+function maybeAutoCheck() {
+  var full = board.placed.every(function (c) { return !!c; });
+  if (full && !board.locked) {
+    board.locked = true;
+    renderBoard();
+    setTimeout(function () { doCheck(); }, 450);
+  }
+}
+
+function startTimer() {
+  stopTimer();
+  var total = state.cfg.time;
+  if (!(state.timeLeft > 0)) state.timeLeft = total;
+  var lastTick = -1;
+  paintTime();
+  state.timerId = setInterval(function () {
+    state.timeLeft -= 0.1;
+    paintTime();
+    var sec = Math.ceil(state.timeLeft);
+    if (sec <= 10 && sec !== lastTick && sec > 0) { lastTick = sec; Sfx.tick(); }
+    if (state.timeLeft <= 0) { stopTimer(); onTimeout(); }
+  }, 100);
+}
+function stopTimer() {
+  if (state && state.timerId) { clearInterval(state.timerId); state.timerId = null; }
+}
+
+function onTimeout() {
+  if (state.answered) return;
+  state.answered = true;
+  board.locked = true;
+  renderBoard();
+  applyMiss(state);
+  Sfx.wrong(); updateLives(); updateHud();
+  showFeedback(false, '⏰ Waktu habis!',
+    'Urutan yang benar: <b>' + orderLabels(board.cards, board.dir) + '</b>.',
+    'Lanjut →', next);
+}
+
+function doCheck() {
+  if (state.answered || !board.locked) return;
+  state.answered = true;
+  stopTimer();
+  var res = checkPlaced(board.placed, board.cards, board.dir);
+  if (res.ok) {
+    var pts = applyCorrect(state);
+    Sfx.correct();
+    updateHud();
+    showFeedback(true,
+      '✅ Tepat! +' + fmt(pts) + (state.combo > 1 ? ' &nbsp;(kombo ×' + state.combo + ' 🔥)' : ''),
+      'Urutanmu sempurna: <b>' + orderLabels(board.cards, board.dir) + '</b>.',
+      'Lanjut →', next);
+  } else {
+    applyMiss(state);
+    Sfx.wrong(); updateLives(); updateHud();
+    board.wrong = res.wrongIdx; /* tandai slot yang salah — dipertahankan renderBoard */
+    renderBoard();
+    showFeedback(false, '❌ Belum tepat',
+      'Urutan yang benar: <b>' + orderLabels(board.cards, board.dir) + '</b>.<br>' +
+      'Slot bertanda <b style="color:#C62828">merah</b> perlu diperbaiki — ketuk kartunya untuk mengembalikan, lalu susun ulang.',
+      '🔄 Coba lagi', retryQuestion);
+  }
+}
+
+function showFeedback(ok, title, explainHtml, btnLabel, btnFn) {
+  var t = $('fb-title');
+  t.innerHTML = title;
+  t.className = 'fb-title ' + (ok ? 'ok' : 'bad');
+  $('fb-explain').innerHTML = '<b>Pembahasan:</b> ' + explainHtml;
+  var nb = $('btn-next');
+  nb.textContent = btnLabel;
+  nb.onclick = function () { Sfx.click(); btnFn(); };
+  $('feedback').classList.remove('hidden');
+  $('feedback').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function retryQuestion() {
+  $('feedback').classList.add('hidden');
+  board.locked = false;
+  state.answered = false;
+  renderBoard();
+  startTimer(); /* lanjut dengan sisa waktu */
+}
+
+function next() {
+  if (state.lives <= 0) { finish(false); return; }
+  state.idx++;
+  if (state.idx >= state.puzzles.length) finish(true);
+  else renderPuzzle();
+}
+
+function onHint() {
+  if (board.locked || !state || $('feedback').classList.contains('hidden') === false) return;
+  var hasEmpty = board.placed.some(function (c) { return !c; });
+  if (!hasEmpty) return;
+  applyHintCost(state);
+  var slot = hintMove(board.cards, board.placed, board.hand, board.dir);
+  board.selected = null;
+  clearWrong();
+  Sfx.correct();
+  updateHud();
+  renderBoard();
+  if (slot >= 0) maybeAutoCheck();
+}
+
+function onRetryLevel() {
+  if (!state) return;
+  Sfx.click();
+  stopTimer();
+  state.score = state.scoreAtStart; /* skor kembali; nyawa tidak berubah */
+  state.idx = 0; state.combo = 0; state.correct = 0; state.mistakes = 0;
+  var puzzles = [];
+  for (var q = 0; q < state.cfg.count; q++) puzzles.push(genPuzzle(state.cfg.id, q));
+  state.puzzles = puzzles;
+  renderPuzzle();
+}
+
+function onQuit() {
+  Sfx.click();
+  stopTimer();
+  renderLevels();
+  show('screen-levels');
+}
+
+function statRow(label, value) {
+  return '<div class="stat-row"><span>' + label + '</span><b>' + value + '</b></div>';
+}
+
+function finish(passed) {
+  stopTimer();
+  var cfg = state.cfg;
+  var stars = starsFor(state.mistakes);
+  if (passed) {
+    var prevBest = progress.best[cfg.id] || 0;
+    var newBest = state.score > prevBest;
+    if (newBest) progress.best[cfg.id] = state.score;
+    progress.stars[cfg.id] = Math.max(progress.stars[cfg.id] || 0, stars);
+    if (cfg.id < LEVELS.length) progress.unlocked = Math.max(progress.unlocked, cfg.id + 1);
+    store.save(progress);
+    /* Bintang untuk portal Arena (rata-rata bintang semua level, 0–3). */
+    try {
+      var tot = 0, k;
+      for (k = 0; k < LEVELS.length; k++) tot += progress.stars[LEVELS[k].id] || 0;
+      localStorage.setItem('arena-bilangan:susun', String(Math.round(tot / LEVELS.length)));
+    } catch (e) {}
+    Sfx.win();
+    if (cfg.id === LEVELS.length) {
+      var totalBest = 0, i;
+      for (i = 0; i < LEVELS.length; i++) totalBest += progress.best[LEVELS[i].id] || 0;
+      $('victory-stats').innerHTML =
+        '<div class="stat-big">🏆</div>' +
+        '<div class="stars-big">' + '★'.repeat(stars) + '☆'.repeat(3 - stars) + '</div>' +
+        statRow('Level terakhir', state.correct + '/' + state.puzzles.length + ' benar') +
+        statRow('Skor level ini', fmt(state.score)) +
+        statRow('Total skor terbaik', fmt(totalBest)) +
+        '<p class="stat-note">Kamu resmi menyandang gelar <b>Master Bilangan Bulat</b>! 🎓</p>';
+      show('screen-victory');
+      return;
+    }
+    $('res-title').textContent = '🎉 Level ' + cfg.id + ' Lolos!';
+    $('res-stats').innerHTML =
+      '<div class="stars-big">' + '★'.repeat(stars) + '☆'.repeat(3 - stars) + '</div>' +
+      statRow('Jawaban benar', state.correct + ' / ' + state.puzzles.length) +
+      statRow('Kesalahan', state.mistakes + '×') +
+      statRow('Skor', fmt(state.score)) +
+      (newBest ? statRow('Rekor', '⭐ Rekor baru!') : statRow('Skor terbaik', fmt(prevBest))) +
+      '<p class="stat-note">Level ' + (cfg.id + 1) + ': <b>' + LEVELS[cfg.id].name + '</b> telah terbuka! 🔓</p>';
+    $('btn-next-level').style.display = '';
+    show('screen-result');
+  } else {
+    $('res-title').textContent = '💔 Nyawa Habis';
+    $('res-stats').innerHTML =
+      '<div class="stat-big">💔</div>' +
+      statRow('Jawaban benar', state.correct + ' / ' + state.puzzles.length) +
+      statRow('Skor', fmt(state.score)) +
+      '<p class="stat-note">Jangan menyerah! Pelajari polanya, lalu coba lagi. 💪</p>';
+    $('btn-next-level').style.display = 'none';
+    show('screen-result');
+  }
+}
+
+/* ---------- wiring ---------- */
+$('btn-start').addEventListener('click', function () { Sfx.click(); renderLevels(); show('screen-levels'); });
+$('btn-back-start').addEventListener('click', function () { Sfx.click(); show('screen-start'); });
+$('btn-quit').addEventListener('click', onQuit);
+$('btn-clear').addEventListener('click', onClear);
+$('btn-hint').addEventListener('click', onHint);
+$('btn-retry-level').addEventListener('click', onRetryLevel);
+$('btn-retry').addEventListener('click', function () { Sfx.click(); startLevel(state.cfg.id, 0); });
+$('btn-next-level').addEventListener('click', function () { Sfx.click(); startLevel(state.cfg.id + 1, state.score); });
+$('btn-to-levels').addEventListener('click', function () { Sfx.click(); renderLevels(); show('screen-levels'); });
+$('btn-again').addEventListener('click', function () { Sfx.click(); renderLevels(); show('screen-levels'); });
+$('btn-victory-levels').addEventListener('click', function () { Sfx.click(); renderLevels(); show('screen-levels'); });
+
+function refreshMuteBtn() {
+  $('btn-mute').textContent = Sfx.isMuted() ? '🔇 Suara: Mati' : '🔊 Suara: Nyala';
+}
+$('btn-mute').addEventListener('click', function () {
+  var m = !Sfx.isMuted();
+  Sfx.setMuted(m); progress.muted = m; store.save(progress);
+  refreshMuteBtn();
+  if (!m) Sfx.click();
+});
+refreshMuteBtn();
+document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
+
+})();
+</script>
+</body>
+</html>

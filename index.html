@@ -48,6 +48,16 @@
       <div class="gc-go">Mainkan →</div>
     </a>
 
+    <a class="game-card" href="susun/">
+      <div class="gc-icon">🧩</div>
+      <div class="gc-body">
+        <h2>Susun Bilangan Bulat</h2>
+        <p>Ketuk kartu ke slot 01–05: urutkan bilangan, bandingkan hasil operasi & rekonstruksi langkah — 5 level berjenjang!</p>
+        <div class="gc-meta"><span class="tp-tag">TP 1</span><span class="stars" id="stars-susun">☆☆☆</span></div>
+      </div>
+      <div class="gc-go">Mainkan →</div>
+    </a>
+
     <a class="game-card" href="warung/">
       <div class="gc-icon">🏪</div>
       <div class="gc-body">
@@ -64,7 +74,7 @@
 
 <script>
 (function () {
-  ['jelajah', 'urutkan', 'duel', 'warung'].forEach(function (id) {
+  ['jelajah', 'urutkan', 'duel', 'susun', 'warung'].forEach(function (id) {
     var n = 0;
     try { n = parseInt(localStorage.getItem('arena-bilangan:' + id), 10) || 0; } catch (e) {}
     n = Math.max(0, Math.min(3, n));
